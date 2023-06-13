@@ -1,9 +1,10 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
 import {
   Alert,
   Box,
@@ -18,14 +19,24 @@ import {
 } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
+import { customAxios } from 'src/utils/customAxios';
 
 const Page = () => {
+  const [message, setMessage]=useState([]);
+  useEffect(()=>{
+    customAxios.get("/info2")
+    .then(function(response){
+      setMessage(response.data)
+    })
+    .catch(error => console.log(error))
+  }, []);
+  
   const router = useRouter();
   const auth = useAuth();
   const [method, setMethod] = useState('email');
   const formik = useFormik({
     initialValues: {
-      email: 'demo@devias.io',
+      email: "emails",
       password: 'Password123!',
       submit: null
     },
@@ -71,7 +82,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Login | Devias Kit
+          로그인 | WebMGZAdmin
         </title>
       </Head>
       <Box
@@ -97,13 +108,13 @@ const Page = () => {
               sx={{ mb: 3 }}
             >
               <Typography variant="h4">
-                Login
+                로그인 WebMGZ 관리자
               </Typography>
               <Typography
                 color="text.secondary"
                 variant="body2"
               >
-                Don&apos;t have an account?
+                계정이 없으신가요?
                 &nbsp;
                 <Link
                   component={NextLink}
@@ -111,7 +122,7 @@ const Page = () => {
                   underline="hover"
                   variant="subtitle2"
                 >
-                  Register
+                  회원가입
                 </Link>
               </Typography>
             </Stack>
@@ -121,11 +132,11 @@ const Page = () => {
               value={method}
             >
               <Tab
-                label="Email"
+                label="이메일"
                 value="email"
               />
               <Tab
-                label="Phone Number"
+                label="핸드폰 번호"
                 value="phoneNumber"
               />
             </Tabs>
@@ -139,7 +150,7 @@ const Page = () => {
                     error={!!(formik.touched.email && formik.errors.email)}
                     fullWidth
                     helperText={formik.touched.email && formik.errors.email}
-                    label="Email Address"
+                    label="이메일"
                     name="email"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
@@ -150,7 +161,7 @@ const Page = () => {
                     error={!!(formik.touched.password && formik.errors.password)}
                     fullWidth
                     helperText={formik.touched.password && formik.errors.password}
-                    label="Password"
+                    label="비밀번호"
                     name="password"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
@@ -158,9 +169,7 @@ const Page = () => {
                     value={formik.values.password}
                   />
                 </Stack>
-                <FormHelperText sx={{ mt: 1 }}>
-                  Optionally you can skip.
-                </FormHelperText>
+                
                 {formik.errors.submit && (
                   <Typography
                     color="error"
@@ -177,7 +186,7 @@ const Page = () => {
                   type="submit"
                   variant="contained"
                 >
-                  Continue
+                  계속
                 </Button>
                 <Button
                   fullWidth
@@ -185,7 +194,7 @@ const Page = () => {
                   sx={{ mt: 3 }}
                   onClick={handleSkip}
                 >
-                  Skip authentication
+                  
                 </Button>
                 <Alert
                   color="primary"
@@ -193,7 +202,7 @@ const Page = () => {
                   sx={{ mt: 3 }}
                 >
                   <div>
-                    You can use <b>demo@devias.io</b> and password <b>Password123!</b>
+                    WebMGZ 관리자를위한 사이트입니다.
                   </div>
                 </Alert>
               </form>

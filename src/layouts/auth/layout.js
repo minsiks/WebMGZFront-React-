@@ -79,25 +79,26 @@ export const Layout = (props) => {
               }}
               variant="h1"
             >
-              Welcome to{' '}
               <Box
                 component="a"
                 sx={{ color: '#15B79E' }}
                 target="_blank"
               >
-                Devias Kit
+                WebMGZ
               </Box>
+              을 방문해주셔서 환영합니다. {' '}
+              
             </Typography>
             <Typography
               align="center"
               sx={{ mb: 3 }}
               variant="subtitle1"
             >
-              A professional kit that comes with ready-to-use MUI components.
+              WebMGZ의 관리자 사이트입니다.
             </Typography>
             <img
               alt=""
-              src="/assets/auth-illustration.svg"
+              src="/assets/logos/logo-admin-mgz.jpg"
             />
           </Box>
         </Grid>
