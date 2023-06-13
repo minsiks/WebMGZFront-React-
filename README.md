@@ -1,3 +1,5 @@
+# WebMGZFront-React-
+React 웹 매거진 FrontEnd
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
