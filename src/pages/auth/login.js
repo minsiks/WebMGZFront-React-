@@ -53,7 +53,21 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        await auth.signIn(values.email, values.password);
+        // await auth.signIn(values.email, values.password);
+
+        axios({
+          method: 'POST',
+          url : 'http://localhost:8081/user/user',
+          data : values
+        })
+        .then(function (res){
+          console.log(res);
+          alert('Successfully signed up!');
+        })
+        .catch(function (res){
+          console.log(res);
+        });
+
         router.push('/');
       } catch (err) {
         helpers.setStatus({ success: false });
