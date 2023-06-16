@@ -96,7 +96,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          로그인 | WebMGZAdmin
+          로그인 | WebMGZ42Admin
         </title>
       </Head>
       <Box
@@ -122,7 +122,7 @@ const Page = () => {
               sx={{ mb: 3 }}
             >
               <Typography variant="h4">
-                로그인 WebMGZ 관리자
+                로그인 WebMGZ42 관리자
               </Typography>
               <Typography
                 color="text.secondary"

@@ -2,6 +2,13 @@ import { Children } from 'react';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 import createEmotionServer from '@emotion/server/create-instance';
 import { createEmotionCache } from 'src/utils/create-emotion-cache';
+import React, {Component} from 'react';
+
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 
 const Favicon = () => (
   <>
@@ -57,6 +64,7 @@ const Fonts = () => (
 class CustomDocument extends Document {
   render() {
     return (
+      
       <Html lang="en">
         <Head>
           <Favicon />
@@ -67,6 +75,7 @@ class CustomDocument extends Document {
         <NextScript />
         </body>
       </Html>
+      
     );
   }
 }

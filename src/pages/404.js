@@ -7,7 +7,7 @@ const Page = () => (
   <>
     <Head>
       <title>
-        404 | Devias Kit
+        404 | WebMGZ42
       </title>
     </Head>
     <Box
@@ -48,28 +48,25 @@ const Page = () => (
             sx={{ mb: 3 }}
             variant="h3"
           >
-            404: The page you are looking for isn’t here
+            404: 페이지가 여기에 존재하지 않습니다.
           </Typography>
           <Typography
             align="center"
             color="text.secondary"
             variant="body1"
           >
-            You either tried some shady route or you came here by mistake.
-            Whichever it is, try using the navigation
+            메롱메롱
           </Typography>
           <Button
-            component={NextLink}
-            href="/"
+            
             startIcon={(
               <SvgIcon fontSize="small">
                 <ArrowLeftIcon />
               </SvgIcon>
             )}
-            sx={{ mt: 3 }}
             variant="contained"
           >
-            Go back to dashboard
+            대쉬보드로 돌아가기
           </Button>
         </Box>
       </Container>

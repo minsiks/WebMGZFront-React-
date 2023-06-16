@@ -23,7 +23,8 @@ const Page = () => {
       userPwd: '',
       userGender: '',
       userPhoneNo:'',
-      userBirth : new Date()
+      userBirth : new Date(),
+      passwordConfirm:'',
     },
     validationSchema: Yup.object({
       userId: Yup
@@ -41,7 +42,7 @@ const Page = () => {
         .required('이름은 필수사항입니다.'),
       userPwd: Yup
         .string()
-        .max(255)
+        .matches(/^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,"영문 숫자 특수기호 조합 8자리 이상입니다.")
         .required('비밀번호는 필수사항입니다.'),
       userPhoneNo: Yup
         .string()
@@ -50,10 +51,12 @@ const Page = () => {
         .required('핸드폰번호는 필수사항입니다..'),
       userBirth: Yup
         .date()
-        .required('생년월일은 필수사항입니다.')
+        .required('생년월일은 필수사항입니다.'),
+      passwordConfirm: Yup
+      .string()
+      .oneOf([Yup.ref('userPwd'), null], '비밀번호가 맞지 않습니다.'),
     }),
     onSubmit: async (values,helpers) => {
-      try {
         console.log(values);
         axios({
           method: 'POST',
@@ -69,12 +72,10 @@ const Page = () => {
         })
         .catch(function (res){
           console.log(res);
+          helpers.setStatus({ success: false });
+          helpers.setErrors({ submit: res.message });
+          helpers.setSubmitting(false);
         });
-      } catch (err) {
-        helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
-        helpers.setSubmitting(false);
-      }
     }
   });
   
@@ -82,7 +83,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          회원가입 | WebMGZAdmin
+          회원가입 | WebMGZ42Admin
         </title>
       </Head>
       <Box
@@ -171,6 +172,16 @@ const Page = () => {
                   onChange={formik.handleChange}
                   type="password"
                   value={formik.values.userPwd}
+                />
+                <TextField
+                  error={!!(formik.touched.passwordConfirm && formik.errors.passwordConfirm)}
+                  fullWidth
+                  helperText={formik.touched.passwordConfirm && formik.errors.passwordConfirm}
+                  label="비밀번호 확인"
+                  name="passwordConfirm"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  type="password"
                 />
                 <RadioGroup
                   row

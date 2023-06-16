@@ -84,7 +84,7 @@ export const Layout = (props) => {
                 sx={{ color: '#15B79E' }}
                 target="_blank"
               >
-                WebMGZ
+                WebMGZ42
               </Box>
               을 방문해주셔서 환영합니다. {' '}
               
