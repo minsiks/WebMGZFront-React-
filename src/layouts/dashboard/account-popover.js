@@ -13,7 +13,7 @@ export const AccountPopover = (props) => {
     () => {
       onClose?.();
       auth.signOut();
-      router.push('/auth/login');
+      router.push('/admin/auth/login');
     },
     [onClose, auth, router]
   );
@@ -57,7 +57,7 @@ export const AccountPopover = (props) => {
         }}
       >
         <MenuItem onClick={handleSignOut}>
-          Sign out
+          로그 아웃
         </MenuItem>
       </MenuList>
     </Popover>

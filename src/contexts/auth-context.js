@@ -1,5 +1,8 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -60,6 +63,7 @@ const reducer = (state, action) => (
 export const AuthContext = createContext({ undefined });
 
 export const AuthProvider = (props) => {
+  const router = useRouter();
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
@@ -127,35 +131,76 @@ export const AuthProvider = (props) => {
     });
   };
 
-  const signIn = async (email, password) => {
-    if (email !== 'demo@devias.io' || password !== 'Password123!') {
-      throw new Error('Please check your email and password');
-    }
-
-    try {
+  const signIn = async (values,helpers) => {
+    console.log(values);
+    axios({
+      method: 'POST',
+      url : 'http://localhost:8081/admin/signIn',
+      data : values
+    })
+    .then(function (res){
+      console.log(res.data);
       window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-    }
+      router.replace("/admin");
+      
+      dispatch({
+        type: HANDLERS.SIGN_IN,
+        payload: res.data
+      });
+    })
+    .catch(function (res){
+      console.log(res);
+      helpers.setStatus({ success: false });
+      helpers.setErrors({ submit: res.message });
+      helpers.setSubmitting(false);
+    });
+    // if (email !== 'demo@devias.io' || password !== 'Password123!') {
+    //   throw new Error('Please check your email and password');
+    // }
 
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
+    // try {
+    //   window.sessionStorage.setItem('authenticated', 'true');
+    // } catch (err) {
+    //   console.error(err);
+    // }
 
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
+    // const user = {
+    //   id: '5e86809283e28b96d2d38537',
+    //   avatar: '/assets/avatars/avatar-anika-visser.png',
+    //   name: 'Anika Visser',
+    //   email: 'anika.visser@devias.io'
+    // };
+
+    // dispatch({
+    //   type: HANDLERS.SIGN_IN,
+    //   payload: user
+    // });
+  };
+
+  const signUp = async (values,helpers) => {
+    console.log(values);
+    axios({
+      method: 'POST',
+      url : 'http://localhost:8081/admin/signUp',
+      data : values
+    })
+    .then(function (res){
+      if(res.data=="중복"){
+        helpers.setErrors({ submit: res.data + "되는 ID 입니다" });
+      }else{
+        router.push("/admin/auth/login");
+      }
+    })
+    .catch(function (res){
+      console.log(res);
+      helpers.setStatus({ success: false });
+      helpers.setErrors({ submit: res.message });
+      helpers.setSubmitting(false);
     });
   };
 
-  const signUp = async (email, name, password) => {
-    throw new Error('Sign up is not implemented');
-  };
-
   const signOut = () => {
+    window.sessionStorage.setItem('authenticated', 'false');
     dispatch({
       type: HANDLERS.SIGN_OUT
     });

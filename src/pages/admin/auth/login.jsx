@@ -23,57 +23,28 @@ import { customAxios } from 'src/utils/customAxios';
 
 const Page = () => {
   const [message, setMessage]=useState([]);
-  useEffect(()=>{
-    customAxios.get("/info2")
-    .then(function(response){
-      setMessage(response.data)
-    })
-    .catch(error => console.log(error))
-  }, []);
-  
   const router = useRouter();
   const auth = useAuth();
-  const [method, setMethod] = useState('email');
+  const [method, setMethod] = useState('userId');
   const formik = useFormik({
     initialValues: {
-      email: "emails",
-      password: 'Password123!',
+      userId: '',
+      userPwd: '',
       submit: null
     },
     validationSchema: Yup.object({
-      email: Yup
-        .string()
-        .email('Must be a valid email')
-        .max(255)
-        .required('Email is required'),
-      password: Yup
+      userId: Yup
         .string()
         .max(255)
-        .required('Password is required')
+        .required('ID는 필수 값 입니다.'),
+      userPwd: Yup
+        .string()
+        .max(255)
+        .required('비밀번호는 필수 값 입니다.')
     }),
     onSubmit: async (values, helpers) => {
-      try {
-        // await auth.signIn(values.email, values.password);
-
-        axios({
-          method: 'POST',
-          url : 'http://localhost:8081/user/user',
-          data : values
-        })
-        .then(function (res){
-          console.log(res);
-          alert('Successfully signed up!');
-        })
-        .catch(function (res){
-          console.log(res);
-        });
-
-        router.push('/');
-      } catch (err) {
-        helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
-        helpers.setSubmitting(false);
-      }
+        console.log(values);
+        await auth.signIn(values,helpers);
     }
   });
 
@@ -132,7 +103,7 @@ const Page = () => {
                 &nbsp;
                 <Link
                   component={NextLink}
-                  href="/auth/register"
+                  href="/admin/auth/register"
                   underline="hover"
                   variant="subtitle2"
                 >
@@ -146,41 +117,41 @@ const Page = () => {
               value={method}
             >
               <Tab
-                label="이메일"
-                value="email"
+                label="아이디"
+                value="userId"
               />
               <Tab
                 label="핸드폰 번호"
                 value="phoneNumber"
               />
             </Tabs>
-            {method === 'email' && (
+            {method === 'userId' && (
               <form
                 noValidate
                 onSubmit={formik.handleSubmit}
               >
                 <Stack spacing={3}>
                   <TextField
-                    error={!!(formik.touched.email && formik.errors.email)}
+                    error={!!(formik.touched.userId && formik.errors.userId)}
                     fullWidth
-                    helperText={formik.touched.email && formik.errors.email}
-                    label="이메일"
-                    name="email"
+                    helperText={formik.touched.userId && formik.errors.userId}
+                    label="아이디"
+                    name="userId"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
-                    type="email"
-                    value={formik.values.email}
+                    type="text"
+                    value={formik.values.userId}
                   />
                   <TextField
-                    error={!!(formik.touched.password && formik.errors.password)}
+                    error={!!(formik.touched.userPwd && formik.errors.userPwd)}
                     fullWidth
-                    helperText={formik.touched.password && formik.errors.password}
+                    helperText={formik.touched.userPwd && formik.errors.userPwd}
                     label="비밀번호"
-                    name="password"
+                    name="userPwd"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
-                    type="password"
-                    value={formik.values.password}
+                    type="userPwd"
+                    value={formik.values.userPwd}
                   />
                 </Stack>
                 

@@ -9,7 +9,7 @@ import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import React, { useEffect } from 'react';
 import "react-datepicker/dist/react-datepicker.css";
-import axios from 'axios';
+
 
 const Page = () => {
   
@@ -57,25 +57,7 @@ const Page = () => {
       .oneOf([Yup.ref('userPwd'), null], '비밀번호가 맞지 않습니다.'),
     }),
     onSubmit: async (values,helpers) => {
-        console.log(values);
-        axios({
-          method: 'POST',
-          url : 'http://localhost:8081/user/user',
-          data : values
-        })
-        .then(function (res){
-          if(res.data=="중복"){
-            helpers.setErrors({ submit: res.data + "되는 ID 입니다" });
-          }else{
-            alert(res.data+'Successfully signed up!');
-          }
-        })
-        .catch(function (res){
-          console.log(res);
-          helpers.setStatus({ success: false });
-          helpers.setErrors({ submit: res.message });
-          helpers.setSubmitting(false);
-        });
+      await auth.signUp(values,helpers);
     }
   });
   
