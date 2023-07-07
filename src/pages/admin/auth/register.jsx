@@ -100,7 +100,7 @@ const Page = () => {
                 &nbsp;
                 <Link
                   component={NextLink}
-                  href="/auth/login"
+                  href="/admin/auth/login"
                   underline="hover"
                   variant="subtitle2"
                 >

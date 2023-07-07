@@ -2,7 +2,8 @@ import { createContext, useContext, useEffect, useReducer, useRef } from 'react'
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-
+import { ACCESS_TOKEN,API_BASE_URL } from 'src/constants';
+import { customAxios } from 'src/utils/customAxios';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -132,56 +133,50 @@ export const AuthProvider = (props) => {
   };
 
   const signIn = async (values,helpers) => {
-    console.log(values);
-    axios({
-      method: 'POST',
-      url : 'http://localhost:8081/admin/signIn',
-      data : values
-    })
-    .then(function (res){
-      console.log(res.data);
+     customAxios.post(
+      '/signIn',
+      values,
+      {withCredentials: true}
+    ).then(function (res){
+      console.log(res);
+      const jwtToken = res.headers['authorization'];
+      const refreshToken = res.headers['refreshtoken'];
       window.sessionStorage.setItem('authenticated', 'true');
+      localStorage.setItem("jwtToken", jwtToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      axios.defaults.headers.common['authorization'] = `Bearer ${jwtToken}`;
+      axios.defaults.headers.common['refreshtoken'] = `Bearer ${refreshToken}`;
+      
+      console.log(jwtToken)
+      console.log(refreshToken)
+      
       router.replace("/admin");
       
       dispatch({
         type: HANDLERS.SIGN_IN,
         payload: res.data
       });
+      console.log(res.data);
     })
     .catch(function (res){
       console.log(res);
       helpers.setStatus({ success: false });
-      helpers.setErrors({ submit: res.message });
+      if(res.code == "ERR_NETWORK"){
+        helpers.setErrors({ submit: "서버 연결이 끊어졌습니다..! 관리자에게 문의 주세요" });
+      }else if(res.response.data.message != null){
+        helpers.setErrors({ submit: res.response.data.message });
+      }else{
+        helpers.setErrors({ submit: decodeURIComponent(decodeURI(res.response.data).replace(/\+/g, " ")) });
+      }
       helpers.setSubmitting(false);
     });
-    // if (email !== 'demo@devias.io' || password !== 'Password123!') {
-    //   throw new Error('Please check your email and password');
-    // }
-
-    // try {
-    //   window.sessionStorage.setItem('authenticated', 'true');
-    // } catch (err) {
-    //   console.error(err);
-    // }
-
-    // const user = {
-    //   id: '5e86809283e28b96d2d38537',
-    //   avatar: '/assets/avatars/avatar-anika-visser.png',
-    //   name: 'Anika Visser',
-    //   email: 'anika.visser@devias.io'
-    // };
-
-    // dispatch({
-    //   type: HANDLERS.SIGN_IN,
-    //   payload: user
-    // });
   };
 
   const signUp = async (values,helpers) => {
     console.log(values);
     axios({
       method: 'POST',
-      url : 'http://localhost:8081/admin/signUp',
+      url : 'http://localhost:8081/api/admin/signUp',
       data : values
     })
     .then(function (res){

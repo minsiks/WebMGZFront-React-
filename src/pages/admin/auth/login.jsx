@@ -19,8 +19,6 @@ import {
 } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
-import { customAxios } from 'src/utils/customAxios';
-
 const Page = () => {
   const [message, setMessage]=useState([]);
   const router = useRouter();
@@ -30,7 +28,6 @@ const Page = () => {
     initialValues: {
       userId: '',
       userPwd: '',
-      submit: null
     },
     validationSchema: Yup.object({
       userId: Yup
@@ -43,6 +40,7 @@ const Page = () => {
         .required('비밀번호는 필수 값 입니다.')
     }),
     onSubmit: async (values, helpers) => {
+        console.log(axios.defaults.headers.common['authorization']);
         console.log(values);
         await auth.signIn(values,helpers);
     }
@@ -150,7 +148,7 @@ const Page = () => {
                     name="userPwd"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
-                    type="userPwd"
+                    type="Password"
                     value={formik.values.userPwd}
                   />
                 </Stack>
