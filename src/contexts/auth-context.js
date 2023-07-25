@@ -132,8 +132,8 @@ export const AuthProvider = (props) => {
     });
   };
 
-  const signIn = async (values,helpers) => {
-     customAxios.post(
+  const logIn = async (values,helpers) =>{
+    customAxios.post(
       '/signIn',
       values,
       {withCredentials: true}
@@ -170,6 +170,30 @@ export const AuthProvider = (props) => {
       }
       helpers.setSubmitting(false);
     });
+  }
+  const signIn = async (values,helpers) => {
+    if(values.userPhoneNo){
+      customAxios.get('admin/findUserByPNo',
+      {
+        params: {
+          userPhoneNo : values.userPhoneNo
+        },
+        withCredentials: true
+      }).then(function(res){
+        if(!res.data.userId){
+          helpers.setErrors({ submit: "전화번호를 다시 확인해 주세요" });
+          return;
+        }
+        values.userId = res.data.userId;
+        logIn(values,helpers);
+      }).catch(function (res){
+        console.log(res);
+      });
+    }else{
+      logIn(values,helpers);
+    }
+
+     
   };
 
   const signUp = async (values,helpers) => {

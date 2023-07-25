@@ -28,16 +28,20 @@ const Page = () => {
     initialValues: {
       userId: '',
       userPwd: '',
+      userPhoneNo : '',
     },
     validationSchema: Yup.object({
       userId: Yup
         .string()
-        .max(255)
-        .required('ID는 필수 값 입니다.'),
+        .max(255),
       userPwd: Yup
         .string()
         .max(255)
-        .required('비밀번호는 필수 값 입니다.')
+        .required('비밀번호는 필수 값 입니다.'),
+      userPhoneNo: Yup
+        .string()
+        .min(9,'핸드폰 번호가 너무 짧아요.')
+        .max(13, '핸드폰 번호가 너무 길어요.'),
     }),
     onSubmit: async (values, helpers) => {
         console.log(axios.defaults.headers.common['authorization']);
@@ -192,15 +196,57 @@ const Page = () => {
             )}
             {method === 'phoneNumber' && (
               <div>
-                <Typography
-                  sx={{ mb: 1 }}
-                  variant="h6"
-                >
-                  Not available in the demo
-                </Typography>
-                <Typography color="text.secondary">
-                  To prevent unnecessary costs we disabled this feature in the demo.
-                </Typography>
+                <form
+                noValidate
+                onSubmit={formik.handleSubmit}
+              >
+                  <Stack spacing={3}>
+                    <TextField
+                    error={!!(formik.touched.userPhoneNo && formik.errors.userPhoneNo)}
+                    fullWidth
+                    helperText={formik.touched.userPhoneNo && formik.errors.userPhoneNo}
+                    label="전화번호"
+                    name="userPhoneNo"
+                    inputProps={{maxLength:13 , inputMode: 'numeric', pattern:'[0-9]*'}}
+                    onBlur={formik.handleBlur}
+                    onChange={e => {
+                      formik.handleChange(e);
+                        formik.setFieldValue('userPhoneNo',e.target.value.replace(/[^0-9]/g, '').replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`));
+                    }}
+                    type="text"
+                    value={formik.values.userPhoneNo}
+                   />
+                    <TextField
+                      error={!!(formik.touched.userPwd && formik.errors.userPwd)}
+                      fullWidth
+                      helperText={formik.touched.userPwd && formik.errors.userPwd}
+                      label="비밀번호"
+                      name="userPwd"
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
+                      type="Password"
+                      value={formik.values.userPwd}
+                    />
+                  </Stack>
+                  {formik.errors.submit && (
+                  <Typography
+                    color="error"
+                    sx={{ mt: 3 }}
+                    variant="body2"
+                  >
+                    {formik.errors.submit}
+                  </Typography>
+                  )}
+                    <Button
+                    fullWidth
+                    size="large"
+                    sx={{ mt: 3 }}
+                    type="submit"
+                    variant="contained"
+                  >
+                    계속
+                  </Button>
+                </form>
               </div>
             )}
           </div>
