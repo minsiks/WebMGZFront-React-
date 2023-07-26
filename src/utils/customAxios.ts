@@ -18,6 +18,7 @@ export async function postRefreshToken() {
     return response;
   } catch (error) {
     if (error.response && error.response.status === 404) {
+      window.localStorage.setItem('authenticated', 'false');
       // 404 오류 처리
       console.log('404 오류가 발생했습니다.');
       // 추가적인 오류 처리 로직을 여기에 작성합니다.
@@ -30,6 +31,7 @@ export async function postRefreshToken() {
         window.location.replace('/admin/auth/login');
       })
     }
+    window.localStorage.setItem('authenticated', 'false');
     throw error; // 다른 오류는 다시 throw하여 상위 레벨에서 처리하도록 합니다.
   }
 }

@@ -77,26 +77,22 @@ export const AuthProvider = (props) => {
 
     initialized.current = true;
 
-    let isAuthenticated = false;
-
+    let isAuthenticated = window.localStorage.getItem('authenticated') === 'true'?true:false;
+    console.log(isAuthenticated);
     try {
-      isAuthenticated = window.sessionStorage.getItem('authenticated') === 'true';
+      isAuthenticated = window.localStorage.getItem('authenticated') === 'true';
     } catch (err) {
       console.error(err);
     }
 
     if (isAuthenticated) {
-      const user = {
-        id: '5e86809283e28b96d2d38537',
-        avatar: '/assets/avatars/avatar-anika-visser.png',
-        name: 'Anika Visser',
-        email: 'anika.visser@devias.io'
-      };
+      const user = JSON.parse(window.localStorage.getItem('user'));
 
       dispatch({
         type: HANDLERS.INITIALIZE,
         payload: user
       });
+      
     } else {
       dispatch({
         type: HANDLERS.INITIALIZE
@@ -114,7 +110,7 @@ export const AuthProvider = (props) => {
 
   const skip = () => {
     try {
-      window.sessionStorage.setItem('authenticated', 'true');
+      window.localStorage.setItem('authenticated', 'true');
     } catch (err) {
       console.error(err);
     }
@@ -138,17 +134,14 @@ export const AuthProvider = (props) => {
       values,
       {withCredentials: true}
     ).then(function (res){
-      console.log(res);
       const jwtToken = res.headers['authorization'];
       const refreshToken = res.headers['refreshtoken'];
-      window.sessionStorage.setItem('authenticated', 'true');
+      window.localStorage.setItem('authenticated', 'true');
+      window.localStorage.setItem('user', JSON.stringify(res.data));
       localStorage.setItem("jwtToken", jwtToken);
       localStorage.setItem("refreshToken", refreshToken);
       axios.defaults.headers.common['authorization'] = `Bearer ${jwtToken}`;
       axios.defaults.headers.common['refreshtoken'] = `Bearer ${refreshToken}`;
-      
-      console.log(jwtToken)
-      console.log(refreshToken)
       
       router.replace("/admin");
       
@@ -156,7 +149,7 @@ export const AuthProvider = (props) => {
         type: HANDLERS.SIGN_IN,
         payload: res.data
       });
-      console.log(res.data);
+      
     })
     .catch(function (res){
       console.log(res);
@@ -197,7 +190,6 @@ export const AuthProvider = (props) => {
   };
 
   const signUp = async (values,helpers) => {
-    console.log(values);
     axios({
       method: 'POST',
       url : 'http://localhost:8081/api/admin/signUp',
@@ -219,7 +211,8 @@ export const AuthProvider = (props) => {
   };
 
   const signOut = () => {
-    window.sessionStorage.setItem('authenticated', 'false');
+    window.localStorage.setItem('authenticated', 'false');
+    localStorage.removeItem("user");
     dispatch({
       type: HANDLERS.SIGN_OUT
     });
